@@ -1,0 +1,25 @@
+pipeline{
+    
+    agent any 
+
+    stages{
+        stage ('Build'){
+
+            setps{
+                sh 'mvn clean package'
+            }
+            post{
+                success{
+                    echo "Archving the artifacts"
+                    archiveArctifacts arctifacts: '/**/target/*.war'
+                }
+            }
+        }
+        stage ('Deploy to tomcat server'){
+            setps{
+                deploy adapters: [tomcat9(credentialsId: 'c6b8807d-0356-49cd-8c92-e96e3e014ac3', path: '', url: 'http://localhost:9090')], contextPath: null, war: '**/*.war'
+            }
+    
+        }
+    }
+}
